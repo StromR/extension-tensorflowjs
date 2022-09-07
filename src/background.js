@@ -1,6 +1,6 @@
 async function init() {
   model = await tf.loadLayersModel(
-    'https://raw.githubusercontent.com/derrydwi/model-test/main/model.json'
+    'https://raw.githubusercontent.com/StromR/FER_model_tfjs/main/LBP_model/model.json'
   );
 
   const stream = await navigator.mediaDevices.getUserMedia({
@@ -27,14 +27,15 @@ const predict = async () => {
     .expandDims(0)
     .expandDims(-1);
   const result = await model.predict(tensor).arraySync()[0];
+  // label for CK+ Dataset
   const label = [
-    'angry',
-    'disgust',
     'fear',
+    'anger',
+    'disgust',
     'happy',
-    'sad',
     'surprise',
-    'neutral',
+    'contempt',
+    'sad',
   ];
   const parsedResult = Object.fromEntries(
     label.map((name, index) => [name, result[index]])
@@ -51,7 +52,7 @@ const getExpression = (expressions) => {
   const mostLikely = expressionsKeys.find(
     (expression) => expressions[expression] === maxValue
   );
-  return mostLikely ? mostLikely : 'neutral';
+  return mostLikely ? mostLikely : 'contempt';
 };
 
 init();
